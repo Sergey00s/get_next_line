@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ialgac <ialgac@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/27 16:50:33 by ialgac            #+#    #+#             */
-/*   Updated: 2022/01/27 20:13:44 by ialgac           ###   ########.fr       */
+/*   Updated: 2022/01/27 20:13:55 by ialgac           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,14 +59,14 @@ static void	ft_getline(char *s, char **line)
 
 char	*get_next_line(int fd)
 {
-	static char	*buffer;
+	static char	*buffer[1024];
 	char		*line;
 	char		*old;
 
-	buffer = rtake(fd, buffer);
-	if (!buffer)
+	buffer[fd] = rtake(fd, buffer[fd]);
+	if (!buffer[fd])
 		return (0);
-	ft_getline(buffer, &line);
+	ft_getline(buffer[fd], &line);
 	if (line)
 	{
 		if (line[0] == 0)
@@ -75,12 +75,12 @@ char	*get_next_line(int fd)
 			line = 0;
 		}
 	}
-	old = buffer;
-	buffer = ft_substr(old, (ft_strchr(old, '\n') - old + 1), ft_strlen(old));
+	old = buffer[fd];
+	buffer[fd] = ft_substr(old, ft_strchr(old, '\n') - old + 1, ft_strlen(old));
 	if (line == 0)
 	{
-		free(buffer);
-		buffer = 0;
+		free(buffer[fd]);
+		buffer[fd] = 0;
 	}
 	free (old);
 	return (line);
